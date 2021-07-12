@@ -206,7 +206,10 @@ tf.app.flags.DEFINE_integer(
     'batch_size', 32, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
-    'train_image_size', None, 'Train image size')
+    'train_image_width', None, 'Train image width')
+
+tf.app.flags.DEFINE_integer(
+    'train_image_length', None, 'Train image size')
 
 tf.app.flags.DEFINE_integer('max_number_of_steps', None,
                             'The maximum number of training steps.')
@@ -465,9 +468,10 @@ def main(_):
       [image, label] = provider.get(['image', 'label'])
       label -= FLAGS.labels_offset
 
-      train_image_size = FLAGS.train_image_size or network_fn.default_image_size
+      train_image_width = FLAGS.train_image_width or network_fn.default_image_size
+      train_image_length = FLAGS.train_image_length or network_fn.default_image_size
 
-      image = image_preprocessing_fn(image, train_image_size, train_image_size)
+      image = image_preprocessing_fn(image, train_image_width, train_image_length)
 
       images, labels = tf.train.batch(
           [image, label],
