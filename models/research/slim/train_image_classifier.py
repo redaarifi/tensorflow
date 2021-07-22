@@ -206,15 +206,12 @@ tf.app.flags.DEFINE_integer(
     'batch_size', 32, 'The number of samples in each batch.')
 
 tf.app.flags.DEFINE_integer(
-    'train_image_width', None, 'Train image width')
-
-tf.app.flags.DEFINE_integer(
-    'train_image_length', None, 'Train image size')
+    'train_image_size', None, 'Train image size')
 
 tf.app.flags.DEFINE_integer('max_number_of_steps', None,
                             'The maximum number of training steps.')
 
-tf.app.flags.DEFINE_bool('use_grayscale', False,
+tf.app.flags.DEFINE_bool('use_grayscale', True,
                          'Whether to convert input images to grayscale.')
 
 #####################
@@ -244,14 +241,11 @@ FLAGS = tf.app.flags.FLAGS
 
 def _configure_learning_rate(num_samples_per_epoch, global_step):
   """Configures the learning rate.
-
   Args:
     num_samples_per_epoch: The number of samples in each epoch of training.
     global_step: The global_step tensor.
-
   Returns:
     A `Tensor` representing the learning rate.
-
   Raises:
     ValueError: if
   """
@@ -297,13 +291,10 @@ def _configure_learning_rate(num_samples_per_epoch, global_step):
 
 def _configure_optimizer(learning_rate):
   """Configures the optimizer used for training.
-
   Args:
     learning_rate: A scalar or `Tensor` learning rate.
-
   Returns:
     An instance of an optimizer.
-
   Raises:
     ValueError: if FLAGS.optimizer is not recognized.
   """
@@ -349,10 +340,8 @@ def _configure_optimizer(learning_rate):
 
 def _get_init_fn():
   """Returns a function run by the chief worker to warm-start the training.
-
   Note that the init_fn is only run when initializing the model during the very
   first global step.
-
   Returns:
     An init function run by the supervisor.
   """
@@ -396,7 +385,6 @@ def _get_init_fn():
 
 def _get_variables_to_train():
   """Returns a list of variables to train.
-
   Returns:
     A list of variables to train by the optimizer.
   """
@@ -468,10 +456,9 @@ def main(_):
       [image, label] = provider.get(['image', 'label'])
       label -= FLAGS.labels_offset
 
-      train_image_width = FLAGS.train_image_width or network_fn.default_image_size
-      train_image_length = FLAGS.train_image_length or network_fn.default_image_size
+      train_image_size = FLAGS.train_image_size or network_fn.default_image_size
 
-      image = image_preprocessing_fn(image, train_image_width, train_image_length)
+      image = image_preprocessing_fn(image, train_image_size, train_image_size)
 
       images, labels = tf.train.batch(
           [image, label],
